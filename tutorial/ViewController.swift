@@ -1,18 +1,35 @@
 import UIKit
 import MetalKit
+import Spatial
+
+typealias v3f = SIMD3<Float>
+
+struct Uniforms {
+    var modelMatrix: float4x4 = float4x4(1.0)
+    var projMatrix: float4x4 = float4x4(1.0)
+}
+
+struct Vertex {
+    var position: v3f
+    var normal: v3f
+}
 
 class ViewController: UIViewController {
     @IBOutlet weak var metalView: MTKView!
 
     var commandQueue: MTLCommandQueue!
     var pipelineState: MTLRenderPipelineState?
+    var depthStencilState: MTLDepthStencilState?
     var vertexBuffer: MTLBuffer?
+    var indexBuffer: MTLBuffer?
     
     let vertices = [
-        SIMD3<Float>(0.0, 1.0, 0.0),
-        SIMD3<Float>(-1.0, -1.0, 0.0),
-        SIMD3<Float>(1.0, -1.0, 0.0),
+        Vertex(position: v3f(0.0, 1.0, 0.0), normal: v3f(0, 0, 1.0)),
+        Vertex(position: v3f(-1.0, -1.0, 0.0), normal: v3f(0, 0, 1.0)),
+        Vertex(position: v3f(1.0, -1.0, 0.0), normal: v3f(0, 0, 1.0)),
     ]
+    
+    let indices: [UInt16] = [0, 1, 2]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +41,17 @@ class ViewController: UIViewController {
         
         commandQueue = metalView.device?.makeCommandQueue();
         
+        let vertexDescriptor = MTLVertexDescriptor()
+        vertexDescriptor.attributes[0].format = .float3
+        vertexDescriptor.attributes[0].offset = 0
+        vertexDescriptor.attributes[0].bufferIndex = 0
+        
+        vertexDescriptor.attributes[1].format = .float3
+        vertexDescriptor.attributes[1].offset = MemoryLayout<v3f>.stride
+        vertexDescriptor.attributes[1].bufferIndex = 0
+        
+        vertexDescriptor.layouts[0].stride = MemoryLayout<Vertex>.stride
+        
         let library = device.makeDefaultLibrary()
         
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
@@ -31,12 +59,24 @@ class ViewController: UIViewController {
         pipelineDescriptor.fragmentFunction = library?.makeFunction(name: "fragment_shader")
         pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
+        pipelineDescriptor.vertexDescriptor = vertexDescriptor
         
         pipelineState = try! device.makeRenderPipelineState(descriptor: pipelineDescriptor)
         
+        let depthStencilDescriptor = MTLDepthStencilDescriptor()
+        depthStencilDescriptor.depthCompareFunction = .less
+        depthStencilDescriptor.isDepthWriteEnabled = true
+        depthStencilState = device.makeDepthStencilState(descriptor: depthStencilDescriptor)
+        
         vertexBuffer = device.makeBuffer(
             bytes: vertices,
-            length: vertices.count * MemoryLayout<SIMD3<Float>>.stride,
+            length: vertices.count * MemoryLayout<Vertex>.stride,
+            options: []
+        )
+        
+        indexBuffer = device.makeBuffer(
+            bytes: indices,
+            length: indices.count * MemoryLayout<UInt16>.size,
             options: []
         )
     }
@@ -49,12 +89,26 @@ extension ViewController: MTKViewDelegate {
         let buffer = commandQueue.makeCommandBuffer()!
         let encoder = buffer.makeRenderCommandEncoder(descriptor: metalView.currentRenderPassDescriptor!)!
         
+        var uniforms = Uniforms(
+            modelMatrix: float4x4(AffineTransform3D(translation: Vector3D(x: 0.0, y: 0.0, z: -10.0))),
+            projMatrix: float4x4(ProjectiveTransform3D(
+                fovyRadians: 45.0 * (Double.pi / 180.0),
+                aspectRatio: view.drawableSize.width / view.drawableSize.height,
+                nearZ: 0.1,
+                farZ: 100.0)
+            )
+        )
+        
+        encoder.setDepthStencilState(depthStencilState!)
         encoder.setRenderPipelineState(pipelineState!)
         encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-        encoder.drawPrimitives(
+        encoder.setVertexBytes(&uniforms, length: MemoryLayout<Uniforms>.size, index: 1)
+        encoder.drawIndexedPrimitives(
             type: .triangle,
-            vertexStart: 0,
-            vertexCount: vertices.count
+            indexCount: indices.count,
+            indexType: .uint16,
+            indexBuffer: indexBuffer!,
+            indexBufferOffset: 0
         )
         
         encoder.endEncoding()
