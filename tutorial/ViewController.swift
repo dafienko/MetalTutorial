@@ -12,6 +12,7 @@ struct Uniforms {
 struct Vertex {
     var position: v3f
     var normal: v3f
+    var color: v3f
 }
 
 class ViewController: UIViewController {
@@ -24,9 +25,9 @@ class ViewController: UIViewController {
     var indexBuffer: MTLBuffer?
     
     let vertices = [
-        Vertex(position: v3f(0.0, 1.0, 0.0), normal: v3f(0, 0, 1.0)),
-        Vertex(position: v3f(-1.0, -1.0, 0.0), normal: v3f(0, 0, 1.0)),
-        Vertex(position: v3f(1.0, -1.0, 0.0), normal: v3f(0, 0, 1.0)),
+        Vertex(position: v3f(0.0, 1.0, 0.0), normal: v3f(0, 0, 1.0), color: v3f(1.0, 0.0, 0.0)),
+        Vertex(position: v3f(-1.0, -1.0, 0.0), normal: v3f(0, 0, 1.0), color: v3f(0.0, 1.0, 0.0)),
+        Vertex(position: v3f(1.0, -1.0, 0.0), normal: v3f(0, 0, 1.0), color: v3f(0.0, 0.0, 1.0)),
     ]
     
     let indices: [UInt16] = [0, 1, 2]
@@ -49,6 +50,10 @@ class ViewController: UIViewController {
         vertexDescriptor.attributes[1].format = .float3
         vertexDescriptor.attributes[1].offset = MemoryLayout<v3f>.stride
         vertexDescriptor.attributes[1].bufferIndex = 0
+        
+        vertexDescriptor.attributes[2].format = .float3
+        vertexDescriptor.attributes[2].offset = vertexDescriptor.attributes[1].offset + MemoryLayout<v3f>.stride
+        vertexDescriptor.attributes[2].bufferIndex = 0
         
         vertexDescriptor.layouts[0].stride = MemoryLayout<Vertex>.stride
         
