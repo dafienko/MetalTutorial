@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BB0BC8632B2208130052DD7F /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0BC8622B2208130052DD7F /* Model.swift */; };
+		BB0BC8662B2209300052DD7F /* Cube.obj in Resources */ = {isa = PBXBuildFile; fileRef = BB0BC8642B2209300052DD7F /* Cube.obj */; };
+		BB0BC8692B22097E0052DD7F /* cube.mtl in Resources */ = {isa = PBXBuildFile; fileRef = BB0BC8682B22097E0052DD7F /* cube.mtl */; };
+		BB0BC86C2B220AB60052DD7F /* SnowmanMaterial.lib in Resources */ = {isa = PBXBuildFile; fileRef = BB0BC86A2B220AB60052DD7F /* SnowmanMaterial.lib */; };
+		BB0BC86D2B220AB60052DD7F /* Snowman.obj in Resources */ = {isa = PBXBuildFile; fileRef = BB0BC86B2B220AB60052DD7F /* Snowman.obj */; };
 		BB6332992B0E7793005ED342 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6332982B0E7793005ED342 /* AppDelegate.swift */; };
 		BB63329B2B0E7793005ED342 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB63329A2B0E7793005ED342 /* SceneDelegate.swift */; };
 		BB63329D2B0E7793005ED342 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB63329C2B0E7793005ED342 /* ViewController.swift */; };
@@ -17,6 +22,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BB0BC8622B2208130052DD7F /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		BB0BC8642B2209300052DD7F /* Cube.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cube.obj; sourceTree = "<group>"; };
+		BB0BC8682B22097E0052DD7F /* cube.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cube.mtl; sourceTree = "<group>"; };
+		BB0BC86A2B220AB60052DD7F /* SnowmanMaterial.lib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SnowmanMaterial.lib; sourceTree = "<group>"; };
+		BB0BC86B2B220AB60052DD7F /* Snowman.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Snowman.obj; sourceTree = "<group>"; };
 		BB6332952B0E7793005ED342 /* tutorial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tutorial.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB6332982B0E7793005ED342 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BB63329A2B0E7793005ED342 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -61,11 +71,16 @@
 				BB6332982B0E7793005ED342 /* AppDelegate.swift */,
 				BB63329A2B0E7793005ED342 /* SceneDelegate.swift */,
 				BB63329C2B0E7793005ED342 /* ViewController.swift */,
+				BB0BC8622B2208130052DD7F /* Model.swift */,
 				BB9FE19C2B0FDAE4008EE2A1 /* Shader.metal */,
 				BB63329E2B0E7793005ED342 /* Main.storyboard */,
 				BB6332A12B0E7794005ED342 /* Assets.xcassets */,
 				BB6332A32B0E7794005ED342 /* LaunchScreen.storyboard */,
 				BB6332A62B0E7794005ED342 /* Info.plist */,
+				BB0BC8642B2209300052DD7F /* Cube.obj */,
+				BB0BC8682B22097E0052DD7F /* cube.mtl */,
+				BB0BC86B2B220AB60052DD7F /* Snowman.obj */,
+				BB0BC86A2B220AB60052DD7F /* SnowmanMaterial.lib */,
 			);
 			path = tutorial;
 			sourceTree = "<group>";
@@ -128,8 +143,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB0BC8662B2209300052DD7F /* Cube.obj in Resources */,
+				BB0BC8692B22097E0052DD7F /* cube.mtl in Resources */,
 				BB6332A52B0E7794005ED342 /* LaunchScreen.storyboard in Resources */,
+				BB0BC86D2B220AB60052DD7F /* Snowman.obj in Resources */,
 				BB6332A22B0E7794005ED342 /* Assets.xcassets in Resources */,
+				BB0BC86C2B220AB60052DD7F /* SnowmanMaterial.lib in Resources */,
 				BB6332A02B0E7793005ED342 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -141,6 +160,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB0BC8632B2208130052DD7F /* Model.swift in Sources */,
 				BB9FE19D2B0FDAE4008EE2A1 /* Shader.metal in Sources */,
 				BB63329D2B0E7793005ED342 /* ViewController.swift in Sources */,
 				BB6332992B0E7793005ED342 /* AppDelegate.swift in Sources */,

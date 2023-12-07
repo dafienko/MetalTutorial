@@ -21,16 +21,7 @@ class ViewController: UIViewController {
     var commandQueue: MTLCommandQueue!
     var pipelineState: MTLRenderPipelineState?
     var depthStencilState: MTLDepthStencilState?
-    var vertexBuffer: MTLBuffer?
-    var indexBuffer: MTLBuffer?
-    
-    let vertices = [
-        Vertex(position: v3f(0.0, 1.0, 0.0), normal: v3f(0, 0, 1.0), color: v3f(1.0, 0.0, 0.0)),
-        Vertex(position: v3f(-1.0, -1.0, 0.0), normal: v3f(0, 0, 1.0), color: v3f(0.0, 1.0, 0.0)),
-        Vertex(position: v3f(1.0, -1.0, 0.0), normal: v3f(0, 0, 1.0), color: v3f(0.0, 0.0, 1.0)),
-    ]
-    
-    let indices: [UInt16] = [0, 1, 2]
+    var model: Model?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,16 +64,10 @@ class ViewController: UIViewController {
         depthStencilDescriptor.isDepthWriteEnabled = true
         depthStencilState = device.makeDepthStencilState(descriptor: depthStencilDescriptor)
         
-        vertexBuffer = device.makeBuffer(
-            bytes: vertices,
-            length: vertices.count * MemoryLayout<Vertex>.stride,
-            options: []
-        )
-        
-        indexBuffer = device.makeBuffer(
-            bytes: indices,
-            length: indices.count * MemoryLayout<UInt16>.size,
-            options: []
+        model = Model(
+            device: device,
+            objFile: Bundle.main.url(forResource: "Snowman", withExtension: "obj")!,
+            mtlFile: Bundle.main.url(forResource: "SnowmanMaterial", withExtension: "lib")!
         )
     }
 }
@@ -94,27 +79,19 @@ extension ViewController: MTKViewDelegate {
         let buffer = commandQueue.makeCommandBuffer()!
         let encoder = buffer.makeRenderCommandEncoder(descriptor: metalView.currentRenderPassDescriptor!)!
         
-        var uniforms = Uniforms(
-            modelMatrix: float4x4(AffineTransform3D(translation: Vector3D(x: 0.0, y: 0.0, z: -10.0))),
-            projMatrix: float4x4(ProjectiveTransform3D(
-                fovyRadians: 45.0 * (Double.pi / 180.0),
-                aspectRatio: view.drawableSize.width / view.drawableSize.height,
-                nearZ: 0.1,
-                farZ: 100.0)
-            )
+        let projMat = float4x4(ProjectiveTransform3D(
+            fovyRadians: 45.0 * (Double.pi / 180.0),
+            aspectRatio: view.drawableSize.width / view.drawableSize.height,
+            nearZ: 0.1,
+            farZ: 100.0)
         )
         
         encoder.setDepthStencilState(depthStencilState!)
         encoder.setRenderPipelineState(pipelineState!)
-        encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-        encoder.setVertexBytes(&uniforms, length: MemoryLayout<Uniforms>.size, index: 1)
-        encoder.drawIndexedPrimitives(
-            type: .triangle,
-            indexCount: indices.count,
-            indexType: .uint16,
-            indexBuffer: indexBuffer!,
-            indexBufferOffset: 0
-        )
+        
+        if model != nil {
+            model!.render(encoder: encoder, viewMatrix: float4x4(1.0), projectionMatrix: projMat)
+        }
         
         encoder.endEncoding()
         buffer.present(view.currentDrawable!)
